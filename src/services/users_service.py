@@ -46,4 +46,13 @@ class UsersService:
             res= await uow.users.delete_by_id(id)
             await uow.commit()
             return res
-    
+        
+    async def add_balance(self, uow: IUnitOfWork, id: int):
+        async with uow:
+            user = await uow.users.find_one(id=id)
+            user.balance+=250000
+            update_data_dict = user.model_dump()
+            res = await uow.users.edit_one(id, update_data_dict)
+            await uow.commit()
+            return res
+        

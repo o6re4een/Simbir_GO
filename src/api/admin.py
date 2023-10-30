@@ -8,9 +8,13 @@ from schemas.users_schema import UserSchema, UserSchemaResponse, userSchemaEdit
 from services.users_service import UsersService
 
 
+#admin jwt
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxMiwiYWRtaW4iOnRydWUsImV4cCI6MTY5ODc1NjIyMH0.MDQA0xYjVOGXbaW5kJ-N0e6elToODbbjadRFbeI-vKI
+
+# user jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaWQiOjE0LCJhZG1pbiI6ZmFsc2UsImV4cCI6MTY5ODc1NzY4Nn0.Yzn5nW6I8aCQxiKH88akisw-N06sNxOrhTeU4jhq-V8
 router = APIRouter(
     prefix="/Admin",
-    tags=["AdminAccount"],
+    tags=["AdminAccountController"],
 )
 
 @router.get("/Account", response_model=list[UserSchemaResponse])

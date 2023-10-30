@@ -8,7 +8,7 @@ from services.users_service import UsersService
 
 router = APIRouter(
     prefix="/users",
-    tags=["Users"],
+    tags=["UsersController"],
 )
 
 

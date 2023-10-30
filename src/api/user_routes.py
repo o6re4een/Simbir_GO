@@ -6,7 +6,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 import sqlalchemy
-from api.auth_logic import admin_access, create_acess_token, bcrypt_context, authenticate_user,user_deps
+from api.auth_handler import create_acess_token
+from api.auth_logic import admin_access, bcrypt_context, authenticate_user,user_deps
+
 from api.deps import UOWDep
 from schemas.token_schema import Token
 
@@ -34,13 +36,13 @@ async def create_user(
     user.password = bcrypt_context.hash(user.password)
     user = await UsersService().add_user(uow,user)
     token = create_acess_token(user.username, user.id, timedelta(hours=24), is_admin=user.isAdmin)
-    return {"acess_token": token, "token_type": "bearer"}
+    return {"acess_token": token}
 
 
 
-@router.post("/SignIn", response_model=Token)
+@router.post("/SignIn", )
 async def login(
-    user:  Annotated[OAuth2PasswordRequestForm, Depends()],
+    user:  UserSchemaCreate,
     uow: UOWDep,
 ):
    
@@ -50,7 +52,7 @@ async def login(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     token = create_acess_token(user_auth.username, user_auth.id, timedelta(hours=24), is_admin=user_auth.isAdmin)
 
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, }
 
 
 @router.get("/Me", response_model=UserSchemaResponse)
@@ -60,12 +62,16 @@ async def get_me(
    
 ):
     
-    # print(user.isAdmin) 
+    # user_response = UserSchemaResponse(
+    #     username=user.username,
+    #     id=user.id,
+    #     isAdmin=user.isAdmin
+    # )
     return user
 
 
 
-@router.put("/Update", response_model=Token)
+@router.put("/Update",)
 async def update_user(
     user: user_deps,
     uow: UOWDep,
@@ -76,7 +82,7 @@ async def update_user(
         update_data.password = bcrypt_context.hash(user.password)
     updated_user = await UsersService().update_user(uow, user.id, update_data)
     token = create_acess_token(updated_user.username, updated_user.id, timedelta(hours=24), is_admin=updated_user.isAdmin)
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token}
     
 
 #ADMIN ROUTE
