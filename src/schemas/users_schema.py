@@ -11,7 +11,10 @@ class UserSchemaBase(BaseModel):
 #schema to create user   
 class UserSchemaCreate(UserSchemaBase):
     password: str
-    
+    # isAdmin: bool = False 
+class UserSchemaCreateAdmin(UserSchemaCreate):
+    isAdmin: bool = True    
+
 class UserSchemaResponse(UserSchemaBase):
     
     balance: float

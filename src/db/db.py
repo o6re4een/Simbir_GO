@@ -1,15 +1,19 @@
-import setting
+
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-
+from setting import REAL_DB_URL
 
 # Engine to interact with db
-engine = create_async_engine("postgresql+asyncpg://postgres:root@localhost:5432/simbir", pool_pre_ping=True)
+# print(REAL_DB_URL)
+engine = create_async_engine(REAL_DB_URL, pool_pre_ping=True, echo=True, future=True)
+
 
 # session with interaction
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
+
+  
 
 class Base(DeclarativeBase):
     pass

@@ -1,30 +1,21 @@
-# from typing import Union
-
-# import uvicorn
-# import setting
-# from fastapi import FastAPI
-
-# app = FastAPI()
-
-
-
-
-# for router in all_routers:
-#     app.include_router(router)
-
-
-# if __name__ == "__main__":
-#     uvicorn.run(app="main:app", reload=True)
 
 import uvicorn
 from fastapi import FastAPI
 
+
 from api.routes import all_routers
 
 
+
+
+
+
+
 app = FastAPI(
-    title="SimbirGO"
+    title="SimbirGO",
+    # lifespan=lifespan
 )
+
 
 
 for router in all_routers:
@@ -32,4 +23,4 @@ for router in all_routers:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", reload=True)
+    uvicorn.run(app="main:app", reload=True, host="0.0.0.0", port=8000)

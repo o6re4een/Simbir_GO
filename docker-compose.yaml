@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  main:
+    container_name: main
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - Simbir_DB
+    restart: always
+    volumes:
+      - .:/app
+    command: /app/entrypoint.sh
+    networks:
+      - my_network
+
+  Simbir_DB:
+    container_name: Simbir_DB
+    image: postgres:14.1-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+    command: -p 5435
+    expose:
+      - 5435
+
+networks:
+  my_network:
+    driver: bridge
+volumes:
+  pgdata:

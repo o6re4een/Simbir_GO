@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
+import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import between, delete, insert, select, update
-
+from sqlalchemy.orm import lazyload
 
 
 class AbstractRepository(ABC):
@@ -38,14 +39,28 @@ class SQLAlchemyRepository(ABC):
         res = [row[0].to_read_model() for row in res.all()]
         return res
     
+    async def find_one_relation(self, **filter_by):
+        
+        stmt = select(self.model).filter_by(**filter_by).options(lazyload("*"))
+        try:
+            res = await self.session.execute(stmt)
+            print(res)
+            return res.scalar_one().to_read_model()
+        except sqlalchemy.exc.NoResultFound:
+            return None
     async def find_one(self, **filter_by):
+        
         stmt = select(self.model).filter_by(**filter_by)
-        res = await self.session.execute(stmt)
-        res = res.scalar_one().to_read_model()
+        try:
+            res = await self.session.execute(stmt)
+            return res.scalar_one().to_read_model()
+        except sqlalchemy.exc.NoResultFound:
+            return None
+        # res = res.scalar_one().to_read_model()
         return res
     
-    async def find_by_id_range(self, start_id: int, end_id: int):
-        stmt = select(self.model).where(between(self.model.id, start_id, end_id))
+    async def find_by_id_range(self, start_id: int, end_id: int, **filter_by):
+        stmt = select(self.model).where(between(self.model.id, start_id, end_id)).filter_by(**filter_by)
         res = await self.session.execute(stmt)
         users = [row[0].to_read_model() for row in res.all()]
         return users

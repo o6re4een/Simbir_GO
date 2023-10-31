@@ -18,7 +18,7 @@ class ColorSchema(ColorSchemaBase):
     
     id: int
     value: str
-    transport: list["TransportSchema"] = []
+    # transport: list["TransportSchema"] = []
 
     class Config:
         from_attributes = True

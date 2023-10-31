@@ -1,12 +1,14 @@
 
+from datetime import timedelta
 from typing import Annotated, Callable
 from fastapi import APIRouter, Depends, HTTPException, status
 import sqlalchemy
+from api.auth_handler import create_acess_token
 from api.auth_logic import admin_access, bcrypt_context
 from api.deps import UOWDep
-from schemas.users_schema import UserSchema, UserSchemaResponse, userSchemaEdit
+from schemas.users_schema import UserSchema, UserSchemaCreateAdmin, UserSchemaResponse, userSchemaEdit
 from services.users_service import UsersService
-
+from setting import JWT_SECRET
 
 #admin jwt
 # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlkIjoxMiwiYWRtaW4iOnRydWUsImV4cCI6MTY5ODc1NjIyMH0.MDQA0xYjVOGXbaW5kJ-N0e6elToODbbjadRFbeI-vKI
@@ -17,7 +19,7 @@ router = APIRouter(
     tags=["AdminAccountController"],
 )
 
-@router.get("/Account", response_model=list[UserSchemaResponse])
+@router.get("/Account", response_model=list[UserSchema])
 async def get_users_by_id(
     # user: user_deps,
     uow: UOWDep,
@@ -29,7 +31,7 @@ async def get_users_by_id(
     users = await UsersService().find_users_by_id_range(uow, start, stop)
     return users
 
-@router.get("/Account/{id}", response_model=UserSchemaResponse)
+@router.get("/Account/{id}", response_model=UserSchema)
 async def get_by_id(
     # user: user_deps,
     uow: UOWDep,
@@ -77,3 +79,17 @@ async def delete_by_id(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
     return isDeleted
+
+@router.post("/Create")
+async def create_admin(
+    uow: UOWDep,
+    user: UserSchemaCreateAdmin,
+    secret: str,
+    # admin: bool = Depends(admin_access),
+):
+    if not secret == JWT_SECRET:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    user.password = bcrypt_context.hash(user.password)
+    user = await UsersService().add_user(uow,user)
+    token = create_acess_token(user.username, user.id, timedelta(hours=24), is_admin=True)
+    return token
