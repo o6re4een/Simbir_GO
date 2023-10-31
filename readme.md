@@ -1,19 +1,30 @@
-Installation:
+# Simbir_GO rent backend
 
-Prereq: 
-    docker-desktop
-    
+## Installation
 
-Configuration:
-    create .env in root 
-    configure it like in .sample.env
-    POSTGRES_PORT leave as default 5435
-    POSTGRES_HOST leave as default too
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-adding Admin:
-    JWT_SECRET is a secret for /api/Admin/Create
+## Configuration
+1. Create a `.env` file in the project root directory.
+2. Configure the `.env` file based on the provided `.sample.env` file.
+    - Ensure `POSTGRES_PORT` is set to the default value, which is `5435`.
+    - Leave `POSTGRES_HOST` at its default value.
 
-Run: 
-    docker-compose build 
+### Adding an Admin
+- `JWT_SECRET` is a secret required for the `/api/Admin/Create` operation.
 
+## Run
+
+1. Build the project with Docker:
+    ```bash
+    docker-compose build
+    ```
+
+2. Start the project with Docker:
+    ```bash
     docker-compose up
+    ```
+
+## License
+This project is licensed under the [MIT License](LICENSE).
